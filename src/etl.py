@@ -107,8 +107,6 @@ def tensor_from_sentence(lang, sentence, device='cpu'):
     """
     indexes = indexes_from_sentence(lang, sentence)
     indexes.append(Language.eos_token)
-    while len(indexes) < 50:
-        indexes.append(Language.pad_token)
     tensor = torch.tensor(indexes).view(-1, 1).to(device)
     return tensor
 
