@@ -167,8 +167,8 @@ torch.save(decoder.state_dict(), './data/decoder_params_{}'.format(args.language
 torch.save(decoder.attention.state_dict(), './data/attention_params_{}'.format(args.language))
 
 # Plot loss
-print('Are you here?')
 print(plot_losses)
-helpers.show_plot(plot_losses)
-
-print('Hello World')
+import pickle
+with open('results/losses.txt', 'wb') as fp:
+    pickle.dump(plot_losses, fp)
+# helpers.show_plot(plot_losses)
