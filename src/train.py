@@ -141,6 +141,7 @@ for epoch in range(1, args.n_epochs + 1):
     training_pair = etl.tensor_from_pair(random.choice(pairs), input_lang, output_lang)
     input = training_pair[0]
     target = training_pair[1]
+    print('Hello World')
 
     # Run the train step
     loss = train(input, target, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion)
