@@ -139,9 +139,8 @@ plot_loss_total = 0 # Reset every plot_every
 for epoch in range(1, args.n_epochs + 1):
     # Get training data for this cycle
     training_pair = etl.tensor_from_pair(random.choice(pairs), input_lang, output_lang)
-    input = training_pair[0]
-    target = training_pair[1]
-    print('Hello World')
+    input = training_pair[0].to(device)
+    target = training_pair[1].to(device)
 
     # Run the train step
     loss = train(input, target, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion)
@@ -168,4 +167,8 @@ torch.save(decoder.state_dict(), './data/decoder_params_{}'.format(args.language
 torch.save(decoder.attention.state_dict(), './data/attention_params_{}'.format(args.language))
 
 # Plot loss
+print('Are you here?')
+print(plot_losses)
 helpers.show_plot(plot_losses)
+
+print('Hello World')

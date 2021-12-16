@@ -123,8 +123,7 @@ def tensor_from_pair(pair, input_lang, output_lang, device='cpu'):
     """
     input = tensor_from_sentence(input_lang, pair[0], device)
     target = tensor_from_sentence(output_lang, pair[1], device)
-    output = torch.cat((input, target), dim=1)
-    return output
+    return input, target
 
 
 if __name__ == '__main__':

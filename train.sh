@@ -17,11 +17,9 @@ python src/train.py \
     --teacher_forcing_ratio 0.8 \
     --clip 5.0 \
     --lr 0.0005 \
-    --n_epochs 10000 \
+    --n_epochs 100 \
     --plot_every 20 \
     --print_every 10 \
     --language spa \
     --device cuda \
     --seed 19 \
-
-/
