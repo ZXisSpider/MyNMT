@@ -56,8 +56,8 @@ def train(input, target, encoder, decoder, encoder_opt, decoder_opt, criterion):
     encoder_outputs, encoder_hidden = encoder(input, encoder_hidden)
 
     # Prepare input and output variables
-    decoder_input = torch.LongTensor([0]).to(device)
-    decoder_context = torch.zeros(1, 1, decoder.hidden_size).to(device)
+    decoder_input = torch.zeros((args.batch_size, 1), dtype=torch.long).to(device)
+    decoder_context = torch.zeros(1, args.batch_size, decoder.hidden_size).to(device)
     decoder_hidden = encoder_hidden
 
     # Scheduled sampling
@@ -84,8 +84,8 @@ def train(input, target, encoder, decoder, encoder_opt, decoder_opt, criterion):
 
             decoder_input = topi
 
-            if topi.item() == Language.eos_token:
-                break
+            # if topi.item() == Language.eos_token:
+            #     break
 
     # Backpropagation
     loss.backward()
@@ -103,6 +103,7 @@ input_lang, output_lang, pairs = etl.prepare_data(args.language)
 
 # Initialize models
 encoder = EncoderRNN(
+    args.batch_size,
     input_lang.n_words,
     args.embedding_size,
     args.hidden_size,
@@ -111,6 +112,7 @@ encoder = EncoderRNN(
 )
 
 decoder = AttentionDecoderRNN(
+    args.batch_size,
     output_lang.n_words,
     args.embedding_size,
     args.hidden_size,
@@ -134,13 +136,21 @@ plot_losses = []
 print_loss_total = 0 # Reset every print_every
 plot_loss_total = 0 # Reset every plot_every
 
+random.shuffle(pairs)
+cur = 0
+end = len(pairs) // args.batch_size * args.batch_size
+
 
 # Begin training
 for epoch in range(1, args.n_epochs + 1):
     # Get training data for this cycle
-    training_pair = etl.tensor_from_pair(random.choice(pairs), input_lang, output_lang)
-    input = training_pair[0].to(device)
-    target = training_pair[1].to(device)
+    # training_pair = etl.tensor_from_pair(random.choice(pairs), input_lang, output_lang)
+    training_pair = torch.zeros((etl.max_length, args.batch_size, 2), dtype=torch.long)
+    for i in range(cur, cur+args.batch_size):
+        training_pair[:, i, 0], training_pair[:, i, 1] = etl.tensor_from_pair(pairs[i], input_lang, output_lang)
+
+    input = training_pair[:, :, 0].to(device)
+    target = training_pair[:, :, 1].to(device)
 
     # Run the train step
     loss = train(input, target, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion)

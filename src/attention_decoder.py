@@ -12,6 +12,7 @@ class AttentionDecoderRNN(nn.Module):
     """Recurrent neural network that makes use of gated recurrent units to translate encoded input using attention."""
 
     def __init__(self,
+                 batch_size,
                  tgt_vocab_size,
                  embedding_size,
                  hidden_size,
@@ -19,6 +20,7 @@ class AttentionDecoderRNN(nn.Module):
                  n_layers=1,
                  dropout=.1):
         """
+        :param batch_size: batch大小
         :param tgt_vocab_size: 目标语言词汇量
         :param embedding_size: 词嵌入向量维度
         :param hidden_size: 隐状态维度
@@ -27,6 +29,7 @@ class AttentionDecoderRNN(nn.Module):
         :param dropout: dropout正则化参数
         """
         super(AttentionDecoderRNN, self).__init__()
+        self.batch_size = batch_size
         self.tgt_vocab_size = tgt_vocab_size
         self.embedding_size = embedding_size
         self.hidden_size = hidden_size
