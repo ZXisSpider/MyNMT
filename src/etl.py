@@ -3,34 +3,42 @@ import helpers
 import torch
 from language import Language
 from tqdm import tqdm
+import math
 
 """
 Data Extraction
 """
 
-max_length = 50
+max_length = 20
 
-def merge_file(fileA, fileB):
+def merge_file(fileA, fileB, fileC):
     """
     合并两个语言文件使其格式符合一行两个句子两种语言，中间用tab隔开
     :param fileA: 文件A
     :param fileB: 文件B
     :return:
     """
-    num_iter = 0
-    with open(fileA, 'rb') as fp1, open(fileB, 'rb') as fp2, open('../data/de.txt', 'w') as fp3:
+    with open(fileA, 'r') as fp1, open(fileB, 'r') as fp2, open(fileC, 'w') as fp3:
         for line1, line2 in tqdm(zip(fp1, fp2)):
-            if isinstance(line1, bytes):
-                line1 = line1.decode()
-            if isinstance(line2, bytes):
-                line2 = line2.decode()
             line1 = line1.rstrip()
             line2 = line2.rstrip()
             fp3.write(line1 + '\t' + line2 + '\n')
-            # num_iter += 1
-            # if num_iter > 1000:
-            #     break
 
+
+def train_test_split(file, trainFile, testFile):
+    with open(file, 'r') as fp:
+        lines = fp.readlines()
+    num_lines = len(lines)
+    print(f"Number of liens is {num_lines}")
+    train_len = math.ceil(0.8 * num_lines)
+    train_lines = lines[:train_len]
+    test_lines = lines[train_len:]
+    with open(trainFile, 'w') as fp:
+        for line in tqdm(train_lines):
+            fp.write(line)
+    with open(testFile, 'w') as fp:
+        for line in tqdm(test_lines):
+            fp.write(line)
 
 def filter_pair(p):
     """
@@ -125,4 +133,5 @@ def tensor_from_pair(pair, input_lang, output_lang, device='cpu'):
 
 
 if __name__ == '__main__':
-    merge_file('../data/train.en', '../data/train.de')
+    # merge_file('../data/en-ve/train.en', '../data/en-ve/train.vi', '../data/en-ve/vi.txt')
+    train_test_split('../data/en-ve/vi.txt', '../data/en-ve/train.txt', '../data/en-ve/test.txt')
